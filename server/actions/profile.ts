@@ -1,0 +1,3 @@
+'use server'; import {revalidatePath} from 'next/cache'; import {requireUser} from '@/lib/auth'; import {db} from '@/lib/db'; import type {ActionResult} from '@/lib/utils'; import {z} from 'zod';
+const schema=z.object({name:z.string().min(2),phone:z.string().regex(/^[6-9]\d{9}$/)});
+export async function updateProfileAction(_:ActionResult,formData:FormData):Promise<ActionResult>{const u=await requireUser();const p=schema.safeParse(Object.fromEntries(formData));if(!p.success)return{success:false,error:'Enter a valid name and 10-digit mobile number.',fields:p.error.flatten().fieldErrors};await db.user.update({where:{id:u.id},data:p.data});revalidatePath('/settings');return{success:true,message:'Profile updated.'}}

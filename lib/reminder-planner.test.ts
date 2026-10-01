@@ -1,0 +1,3 @@
+import {describe,expect,it} from 'vitest';
+import {createReminderPlan} from './reminder-planner';
+describe('reminder sweep planner',()=>{const now=new Date(2026,9,2);const tenancy={id:'t1',rentDueDay:5,gracePeriodDays:3};it('plans a three-day reminder once',()=>{const first=createReminderPlan([tenancy],new Set(),new Set(),now);expect(first).toHaveLength(1);const keys=new Set(first.map(x=>`${x.tenancy.id}:${x.month}:${x.reminderType}`));expect(createReminderPlan([tenancy],new Set(),keys,now)).toHaveLength(0)});it('skips a paid tenancy',()=>{expect(createReminderPlan([tenancy],new Set(['t1']),new Set(),now)).toHaveLength(0)})});

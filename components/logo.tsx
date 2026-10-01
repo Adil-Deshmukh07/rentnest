@@ -1,0 +1,2 @@
+import Link from 'next/link'; import {KeyRound} from 'lucide-react';
+export function Logo(){return <Link href="/" className="group flex items-center gap-2 font-bold tracking-tight"><span className="premium-mark grid size-8 place-items-center rounded-lg text-primary-foreground transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105"><KeyRound className="size-4"/></span><span>Rent<span className="text-primary">Nest</span></span></Link>}

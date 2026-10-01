@@ -1,0 +1,2 @@
+import {AuthForm} from '@/components/auth-form';
+export const metadata={title:'Create account'}; export default function Register(){return <><p className="text-sm font-semibold text-primary">GET STARTED</p><h1 className="mt-2 text-3xl font-semibold tracking-tight">Create your RentNest account</h1><p className="mb-8 mt-2 text-muted-foreground">A simpler rental journey starts here.</p><AuthForm mode="register"/></>}

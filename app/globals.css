@@ -1,0 +1,60 @@
+@import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
+@theme inline {
+  --font-sans: "Geist", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", Consolas, monospace;
+  --color-background: var(--background); --color-foreground: var(--foreground);
+  --color-card: var(--card); --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary); --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary); --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted); --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent); --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive); --color-border: var(--border); --color-input: var(--input); --color-ring: var(--ring);
+  --radius-sm: .55rem; --radius-md: .75rem; --radius-lg: 1rem; --radius-xl: 1.3rem;
+}
+:root {
+  --background:oklch(.985 .006 85); --foreground:oklch(.205 .015 70);
+  --card:oklch(.998 .003 85); --card-foreground:var(--foreground);
+  --primary:oklch(.49 .105 76); --primary-foreground:oklch(.99 .004 85);
+  --secondary:oklch(.955 .014 82); --secondary-foreground:oklch(.27 .028 72);
+  --muted:oklch(.962 .008 82); --muted-foreground:oklch(.515 .02 72);
+  --accent:oklch(.935 .035 82); --accent-foreground:oklch(.32 .07 72);
+  --destructive:oklch(.59 .21 25); --border:oklch(.89 .016 82);
+  --input:var(--border); --ring:var(--primary);
+  --gold-highlight:oklch(.72 .12 82); --gold-shadow:oklch(.37 .075 68);
+}
+.dark {
+  --background:oklch(.135 .009 70); --foreground:oklch(.955 .008 82);
+  --card:oklch(.175 .011 70); --card-foreground:var(--foreground);
+  --primary:oklch(.76 .12 80); --primary-foreground:oklch(.17 .018 68);
+  --secondary:oklch(.22 .014 70); --secondary-foreground:var(--foreground);
+  --muted:oklch(.215 .011 70); --muted-foreground:oklch(.69 .018 78);
+  --accent:oklch(.265 .035 74); --accent-foreground:oklch(.91 .055 82);
+  --destructive:oklch(.65 .2 25); --border:oklch(.29 .018 72);
+  --input:var(--border); --ring:var(--primary);
+  --gold-highlight:oklch(.84 .105 84); --gold-shadow:oklch(.56 .095 72);
+}
+* { border-color:var(--border); }
+html { scroll-behavior:smooth; }
+body {
+  background-color:var(--background); color:var(--foreground); font-family:var(--font-sans);
+  background-image:radial-gradient(circle at 50% -20%,color-mix(in oklab,var(--primary) 7%,transparent),transparent 32rem);
+}
+button,a,input,select,textarea { outline-color:var(--ring); }
+::selection { background:color-mix(in oklab,var(--primary) 35%,transparent); }
+.container-page { width:min(1180px,calc(100% - 2rem)); margin-inline:auto; }
+.surface { background:color-mix(in oklab,var(--card) 96%,transparent); border:1px solid var(--border); box-shadow:0 1px 2px rgb(67 48 16/.04),0 18px 50px rgb(67 48 16/.07); }
+.grid-dots { background-image:radial-gradient(color-mix(in oklab,var(--foreground) 12%,transparent) 1px,transparent 1px); background-size:22px 22px; }
+.premium-button {
+  background-image:linear-gradient(135deg,var(--gold-highlight),var(--primary) 52%,var(--gold-shadow));
+  box-shadow:inset 0 1px 0 rgb(255 255 255/.22),0 6px 18px color-mix(in oklab,var(--primary) 20%,transparent);
+}
+.premium-button:hover { filter:brightness(1.06); box-shadow:inset 0 1px 0 rgb(255 255 255/.25),0 8px 22px color-mix(in oklab,var(--primary) 28%,transparent); }
+.premium-mark {
+  background-image:linear-gradient(145deg,var(--gold-highlight),var(--primary) 56%,var(--gold-shadow));
+  box-shadow:inset 0 1px 0 rgb(255 255 255/.25),0 5px 14px color-mix(in oklab,var(--primary) 22%,transparent);
+}
+.gold-text {
+  background:linear-gradient(105deg,var(--gold-shadow),var(--primary) 45%,var(--gold-highlight));
+  background-clip:text; -webkit-background-clip:text; color:transparent;
+}

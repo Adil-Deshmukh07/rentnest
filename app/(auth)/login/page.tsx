@@ -1,0 +1,2 @@
+import {AuthForm,DemoAccounts} from '@/components/auth-form';
+export const metadata={title:'Log in'}; export default function Login(){return <><p className="text-sm font-semibold text-primary">WELCOME BACK</p><h1 className="mt-2 text-3xl font-semibold tracking-tight">Log in to your account</h1><p className="mb-8 mt-2 text-muted-foreground">Your homes, requests and payments are waiting.</p><AuthForm mode="login"/><DemoAccounts/></>}

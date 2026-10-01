@@ -1,0 +1,1 @@
+import {PageHeader} from '@/components/page-header'; import {PropertyForm} from '@/components/property-form'; export default function NewProperty(){return <><PageHeader eyebrow="NEW LISTING" title="Add a property" description="Create a complete, tenant-ready property profile."/><PropertyForm/></>}

@@ -1,0 +1,233 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  OWNER
+  TENANT
+}
+enum PropertyType {
+  APARTMENT
+  INDEPENDENT_HOUSE
+  VILLA
+  PG
+  STUDIO
+  COMMERCIAL
+}
+enum Furnishing {
+  UNFURNISHED
+  SEMI_FURNISHED
+  FULLY_FURNISHED
+}
+enum Availability {
+  AVAILABLE
+  OCCUPIED
+}
+enum RequestStatus {
+  SUBMITTED
+  APPROVED
+  REJECTED
+  CLOSED
+}
+enum PaymentMethod {
+  UPI
+  BANK_TRANSFER
+  CASH
+  CHEQUE
+}
+enum NotificationType {
+  RENT_UPCOMING
+  RENT_DUE
+  RENT_OVERDUE
+  RENT_MANUAL
+  REQUEST_APPROVED
+  REQUEST_CLOSED
+}
+enum ReminderType {
+  THREE_DAYS_BEFORE
+  DUE_DATE
+  OVERDUE
+  MANUAL
+}
+
+model User {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  phone String
+  passwordHash String
+  role Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  properties Property[]
+  rentalRequests RentalRequest[]
+  tenancies Tenancy[] @relation("TenantTenancies")
+  savedProperties SavedProperty[]
+  notifications Notification[]
+  @@index([role])
+}
+
+model Property {
+  id String @id @default(cuid())
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  title String
+  description String
+  address String
+  city String
+  locality String
+  pincode String
+  monthlyRent Int
+  securityDeposit Int
+  type PropertyType
+  bedrooms Int
+  bathrooms Int
+  areaSqFt Int
+  furnishing Furnishing
+  facilities String @default("[]")
+  availability Availability @default(AVAILABLE)
+  availableFrom DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  images PropertyImage[]
+  requests RentalRequest[]
+  tenancies Tenancy[]
+  savedBy SavedProperty[]
+  availabilityHistory PropertyAvailabilityHistory[]
+  @@index([ownerId])
+  @@index([city, availability])
+  @@index([monthlyRent])
+}
+
+model PropertyImage {
+  id String @id @default(cuid())
+  propertyId String
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  url String
+  alt String?
+  sortOrder Int @default(0)
+  @@index([propertyId])
+}
+
+model RentalRequest {
+  id String @id @default(cuid())
+  requestCode String @unique
+  propertyId String
+  tenantId String
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  tenant User @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  status RequestStatus @default(SUBMITTED)
+  moveInDate DateTime
+  leaseMonths Int
+  occupants Int
+  message String
+  ownerNote String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  history RequestStatusHistory[]
+  tenancy Tenancy?
+  @@index([propertyId, status])
+  @@index([tenantId, status])
+}
+
+model RequestStatusHistory {
+  id String @id @default(cuid())
+  requestId String
+  request RentalRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  status RequestStatus
+  note String?
+  createdAt DateTime @default(now())
+  @@index([requestId, createdAt])
+}
+
+model Tenancy {
+  id String @id @default(cuid())
+  propertyId String
+  tenantId String
+  requestId String @unique
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  tenant User @relation("TenantTenancies", fields: [tenantId], references: [id], onDelete: Cascade)
+  request RentalRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  startDate DateTime
+  endDate DateTime?
+  monthlyRent Int
+  rentDueDay Int @default(5)
+  gracePeriodDays Int @default(3)
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[]
+  notifications Notification[]
+  reminders Reminder[]
+  @@index([propertyId, active])
+  @@index([tenantId, active])
+}
+
+model Notification {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenancyId String?
+  tenancy Tenancy? @relation(fields: [tenancyId], references: [id], onDelete: Cascade)
+  month String?
+  type NotificationType
+  title String
+  message String
+  link String?
+  isRead Boolean @default(false)
+  createdAt DateTime @default(now())
+  @@index([userId, isRead, createdAt])
+  @@index([tenancyId, month])
+}
+
+model Reminder {
+  id String @id @default(cuid())
+  tenancyId String
+  tenancy Tenancy @relation(fields: [tenancyId], references: [id], onDelete: Cascade)
+  month String
+  reminderType ReminderType
+  createdAt DateTime @default(now())
+  @@unique([tenancyId, month, reminderType])
+  @@index([createdAt])
+}
+
+model PropertyAvailabilityHistory {
+  id String @id @default(cuid())
+  propertyId String
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  availability Availability
+  reason String
+  createdAt DateTime @default(now())
+  @@index([propertyId, createdAt])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  receiptCode String @unique
+  tenancyId String
+  tenancy Tenancy @relation(fields: [tenancyId], references: [id], onDelete: Cascade)
+  month Int
+  year Int
+  amount Int
+  paymentDate DateTime
+  method PaymentMethod
+  transactionRef String?
+  notes String?
+  createdAt DateTime @default(now())
+  @@unique([tenancyId, month, year])
+  @@index([year, month])
+}
+
+model SavedProperty {
+  userId String
+  propertyId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@id([userId, propertyId])
+}

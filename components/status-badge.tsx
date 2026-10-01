@@ -1,0 +1,1 @@
+import {Badge} from './ui/badge'; import {titleCase} from '@/lib/utils'; export function StatusBadge({status}:{status:string}){const tone=status==='APPROVED'||status==='AVAILABLE'?'green':status==='SUBMITTED'?'amber':status==='REJECTED'?'red':'neutral';return <Badge tone={tone}>{titleCase(status)}</Badge>}
